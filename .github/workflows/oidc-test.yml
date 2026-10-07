@@ -16,13 +16,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Debug OIDC Token
+      - name: Debug OIDC Token Claims
         run: |
           echo "Fetching OIDC token..."
           TOKEN=$(curl -sSL "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com" \
-            -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN")
-          echo "OIDC Token Claims:"
-          echo $TOKEN | jq -r '.'
+            -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" | jq -r '.value')
+          echo "Decoding JWT claims..."
+          echo $TOKEN | cut -d "." -f2 | base64 -d | jq .
 
       - name: Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
