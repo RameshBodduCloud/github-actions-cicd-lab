@@ -19,8 +19,9 @@ jobs:
       - name: Debug OIDC Token Claims
         run: |
           echo "Fetching OIDC token..."
-          TOKEN=$(curl -sSL "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com" \
-            -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" | jq -r '.value')
+          RAW=$(curl -sSL "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sts.amazonaws.com" \
+            -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN")
+          TOKEN=$(echo $RAW | jq -r '.value')
           echo "Decoding JWT claims..."
           echo $TOKEN | cut -d "." -f2 | base64 -d | jq .
 
